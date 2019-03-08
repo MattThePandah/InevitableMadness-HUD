@@ -1,6 +1,6 @@
 // INEVITABLE MADNESS CUSTOM HUD SCRIPT
 // WRITTEN BY PANDAHCHAN
-// VERSION 1.0 ALPHA
+// VERSION 2.0 ALPHA
 
 // Hud Positions for Each Applier System
 vector OMEGA = <0,0,0>;
@@ -9,18 +9,21 @@ vector SLINK = <0,0,180>;
 vector MAITREYA = <0,0,270>;
 vector VISTA = <0,270,0>;
 
-//Shows all buttons which are avaiilable on the HUD
-buttonShow()
-{
-    integer i;
-    // Maybe try and fix this mess?
-    list BUTTONS = [9,10,11,12,13,14,15,20,21,22,23,24,25,2,3,4,5,6,7,8,19];
-    do
-    {
-        llSetLinkAlpha(llList2Integer(BUTTONS,i), 1.0,2);
-    }
-    while (++i < llGetListLength(BUTTONS));
-}
+integer numRows = 11;
+integer numCols = 11;
+
+// //Shows all buttons which are avaiilable on the HUD
+// buttonShow()
+// {
+//     integer i;
+//     // Maybe try and fix this mess?
+//     list BUTTONS = [9,10,11,12,13,14,15,20,21,22,23,24,25,2,3,4,5,6,7,8,19];
+//     do
+//     {
+//         llSetLinkAlpha(llList2Integer(BUTTONS,i), 1.0,2);
+//     }
+//     while (++i < llGetListLength(BUTTONS));
+// }
 
 //Get link number with prim name
 integer getLinkWithName(string name)
@@ -74,13 +77,17 @@ default
         integer touched_link_number = llDetectedLinkNumber(0);
         string touched_link_name = llGetLinkName(touched_link_number);
 
+        vector touchUV = llDetectedTouchUV(0);
+        integer columnIndex = (integer) (touchUV.x * numberOfColumns);
+        integer rowIndex    = (integer) (touchUV.y * numberOfRows);
+        integer cellIndex   = rowIndex * numberOfColumns + columnIndex;
+
         list params;
 
         // Check which button is pressed
         // Opens it from the bat wings.
         if (touched_link_name == "Open")
         {
-            buttonShow();
             //Find position of prim and increase it by 1
             vector link_pos = llList2Vector(llGetLinkPrimitiveParams(open_button_link, [PRIM_POS_LOCAL]), 0);
             link_pos.z += 1.2;
@@ -91,8 +98,9 @@ default
         }
 
         // Close the hud
-        else if (touched_link_name == "Kill HUD")
+        else if (cellIndex == 118)
         {
+            
             llSetLinkAlpha(-1, 0.0, ALL_SIDES);
             vector link_pos = llList2Vector(llGetLinkPrimitiveParams(open_button_link, [PRIM_POS_LOCAL]), 0);
             link_pos.z -= 1.2;
@@ -100,13 +108,13 @@ default
             llSetLinkAlpha(open_button_link, 1.0, ALL_SIDES);
         }
         // Omega button
-        else if (touched_link_name == "Omega")
+        else if (cellIndex == 97)
         {
             llSetLinkPrimitiveParamsFast(LINK_ROOT, [PRIM_ROT_LOCAL, llEuler2Rot(OMEGA*DEG_TO_RAD)]);
         }
 
         // Slink Button
-        else if (touched_link_name == "Lelutka")
+        else if (cellIndex == 86)
         {
             llSetLinkPrimitiveParamsFast(LINK_ROOT, [PRIM_ROT_LOCAL, llEuler2Rot(SLINK*DEG_TO_RAD)]);
         }
@@ -130,13 +138,13 @@ default
         }
 
         // Redelivery Button
-        else if (touched_link_name == "Redelivery")
+        else if (cellIndex == 6)
         {
             llMessageLinked( LINK_THIS, 0, "REDELIVER|"+(string)merchant, user );
         }
 
         // Flickr page.
-        else if (touched_link_name == "Flickr")
+        else if (cellIndex == 12)
         {
             string info = "Visit the Inevitable Madness Flickr page.";
             string url = "https://www.flickr.com/photos/inevitablemadness";
@@ -144,7 +152,7 @@ default
         }
 
         // Marketplace Link.
-        else if (touched_link_name == "Marketplace")
+        else if (cellIndex == 2)
         {
             string info = "Visit the Inevitable Madness Marketplace.";
             string url = "https://marketplace.secondlife.com/stores/177939";
@@ -152,14 +160,14 @@ default
         }
 
         // Facebook page.
-        else if (touched_link_name == "Facebook")
+        else if (cellIndex == 15)
         {
             string info = "Visit the Inevitable Madness Facebook.";
             string url = "https://www.facebook.com/InevitableMadnessOfficial/";
             llLoadURL(user, info, url);
         }
 
-        else if (touched_link_name == "Landmark")
+        else if (cellIndex == 8)
         {
             llGiveInventory(user, llGetInventoryName(INVENTORY_LANDMARK, 0));
         }
