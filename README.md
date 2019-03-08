@@ -1,1 +1,1 @@
-InevitableMadness-HUD
+This repository is for the Inevitable Madness HUD Script.
